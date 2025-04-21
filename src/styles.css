@@ -1,0 +1,150 @@
+/* Base styles */
+:root {
+  --primary: #2196f3;
+  --primary-dark: #1976d2;
+  --secondary: #f5f5f5;
+  --text: #333333;
+  --background: #ffffff;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --working-color: #e3f2fd;
+  --break-color: #e8f5e9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color 0.5s ease;
+  height: 100vh;
+  padding: 20px;
+}
+
+body.working {
+  background-color: var(--working-color);
+}
+
+body.break {
+  background-color: var(--break-color);
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--primary-dark);
+}
+
+h2 {
+  margin-bottom: 15px;
+  color: var(--primary-dark);
+}
+
+/* Timer card */
+.timer-card {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.timer-display {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 20px 0;
+  color: var(--primary);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Settings card */
+.settings-card {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--card-shadow);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn.primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn.secondary {
+  background-color: var(--secondary);
+  color: var(--text);
+}
+
+.btn.secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Working vs Break state indicators */
+body.working #status-message {
+  color: var(--primary);
+}
+
+body.break #status-message {
+  color: var(--success);
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .timer-display {
+    font-size: 3rem;
+  }
+}
