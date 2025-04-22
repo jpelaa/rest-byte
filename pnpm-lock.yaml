@@ -7,12 +7,19 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@tauri-apps/plugin-notification':
+        specifier: ~2
+        version: 2.2.2
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^2
         version: 2.5.0
 
 packages:
+
+  '@tauri-apps/api@2.5.0':
+    resolution: {integrity: sha512-Ldux4ip+HGAcPUmuLT8EIkk6yafl5vK0P0c0byzAKzxJh7vxelVtdPONjfgTm96PbN24yjZNESY8CKo8qniluA==}
 
   '@tauri-apps/cli-darwin-arm64@2.5.0':
     resolution: {integrity: sha512-VuVAeTFq86dfpoBDNYAdtQVLbP0+2EKCHIIhkaxjeoPARR0sLpFHz2zs0PcFU76e+KAaxtEtAJAXGNUc8E1PzQ==}
@@ -85,7 +92,12 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
 
+  '@tauri-apps/plugin-notification@2.2.2':
+    resolution: {integrity: sha512-d71rJdtkFUTcG4dqydnv6d7ZwlNZVcdjrVOPwc9GsF6y9DgVN1WCZ9T/vbfD2qrJslf7ai+rnNJc62TLLC2IdA==}
+
 snapshots:
+
+  '@tauri-apps/api@2.5.0': {}
 
   '@tauri-apps/cli-darwin-arm64@2.5.0':
     optional: true
@@ -133,3 +145,7 @@ snapshots:
       '@tauri-apps/cli-win32-arm64-msvc': 2.5.0
       '@tauri-apps/cli-win32-ia32-msvc': 2.5.0
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
+
+  '@tauri-apps/plugin-notification@2.2.2':
+    dependencies:
+      '@tauri-apps/api': 2.5.0

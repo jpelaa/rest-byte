@@ -1,5 +1,10 @@
 // main.js
 
+// when using `"withGlobalTauri": true`, you may use
+const { isPermissionGranted, requestPermission, sendNotification } =
+  window.__TAURI__.notification;
+let permissionGranted;
+
 document.addEventListener("DOMContentLoaded", () => {
   // DOM elements
   const timerDisplay = document.getElementById("timer-display");
@@ -65,6 +70,15 @@ document.addEventListener("DOMContentLoaded", () => {
                   : "Step away from your computer for a bit.",
               }
             );
+            // Once permission has been granted we can send the notification
+            if (permissionGranted) {
+              sendNotification({
+                title: isWorking ? "Break finished!" : "Time for a break!",
+                body: isWorking
+                  ? "Time to focus on your work again."
+                  : "Step away from your computer for a bit.",
+              });
+            }
           } catch (e) {
             console.error("Notification failed:", e);
           }
@@ -108,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Initialize app
-  function init() {
+  async function init() {
     // Set default values in form
     workDurationInput.value = Math.floor(workDuration / 60);
     breakDurationInput.value = Math.floor(breakDuration / 60);
@@ -118,9 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
     resetButton.addEventListener("click", resetTimer);
     settingsForm.addEventListener("submit", saveSettings);
 
-    // Request notification permission
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
+    // Do you have permission to send a notification?
+    permissionGranted = await isPermissionGranted();
+
+    // If not we need to request it
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === "granted";
+      sendNotification({
+        title: "Test Notification",
+        body: "Notification is working ",
+      });
     }
 
     // Initial display update
