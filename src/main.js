@@ -3,6 +3,8 @@
 // when using `"withGlobalTauri": true`, you may use
 const { isPermissionGranted, requestPermission, sendNotification } =
   window.__TAURI__.notification;
+const { ask, confirm } = window.__TAURI__.dialog;
+
 let permissionGranted;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -62,23 +64,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Show notification
           try {
-            new Notification(
-              isWorking ? "Break finished!" : "Time for a break!",
-              {
-                body: isWorking
-                  ? "Time to focus on your work again."
-                  : "Step away from your computer for a bit.",
-              }
-            );
+            // new Notification(
+            //   isWorking ? "Break finished!" : "Time for a break!",
+            //   {
+            //     body: isWorking
+            //       ? "Time to focus on your work again."
+            //       : "Step away from your computer for a bit.",
+            //   }
+            // );
             // Once permission has been granted we can send the notification
-            if (permissionGranted) {
-              sendNotification({
+            // if (permissionGranted) {
+            //   sendNotification({
+            //     title: isWorking ? "Break finished!" : "Time for a break!",
+            //     body: isWorking
+            //       ? "Time to focus on your work again."
+            //       : "Step away from your computer for a bit.",
+            //   });
+            // }
+            // Create a Yes/No dialog
+            ask(
+              isWorking
+                ? "Time to focus on your work again."
+                : "Step away from your computer for a bit.",
+              {
                 title: isWorking ? "Break finished!" : "Time for a break!",
-                body: isWorking
-                  ? "Time to focus on your work again."
-                  : "Step away from your computer for a bit.",
-              });
-            }
+                kind: "warning",
+              }
+            ).then((ans) => {
+              if (ans) {
+              } else {
+                resetTimer();
+                startTimer();
+              }
+            });
           } catch (e) {
             console.error("Notification failed:", e);
           }
@@ -133,17 +151,17 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsForm.addEventListener("submit", saveSettings);
 
     // Do you have permission to send a notification?
-    permissionGranted = await isPermissionGranted();
+    // permissionGranted = await isPermissionGranted();
 
     // If not we need to request it
-    if (!permissionGranted) {
-      const permission = await requestPermission();
-      permissionGranted = permission === "granted";
-      sendNotification({
-        title: "Test Notification",
-        body: "Notification is working ",
-      });
-    }
+    // if (!permissionGranted) {
+    //   const permission = await requestPermission();
+    //   permissionGranted = permission === "granted";
+    //   sendNotification({
+    //     title: "Test Notification",
+    //     body: "Notification is working ",
+    //   });
+    // }
 
     // Initial display update
     updateDisplay();
