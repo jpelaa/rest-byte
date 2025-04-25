@@ -1,13 +1,19 @@
 // main.js
+// import desktopIdle from "desktop-idle";
 
 // when using `"withGlobalTauri": true`, you may use
+
 const { isPermissionGranted, requestPermission, sendNotification } =
   window.__TAURI__.notification;
 const { ask, confirm } = window.__TAURI__.dialog;
+const { listen } = window.__TAURI__.event;
+const invoke = window.__TAURI__.core.invoke;
 
 let permissionGranted;
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log(window.__TAURI__, "  window.__TAURI__ ");
+
   // DOM elements
   const timerDisplay = document.getElementById("timer-display");
   const statusMessage = document.getElementById("status-message");
@@ -138,6 +144,32 @@ document.addEventListener("DOMContentLoaded", () => {
       resetTimer();
     }
   }
+
+  listen("idle_state_changed", (event) => {
+    console.log("Event triggered : " + event.payload);
+    if (isRunning && isWorking) {
+      if (event.payload) {
+        console.log("System is idle, pausing timer");
+        // Add logic to pause your break timer here
+        clearInterval(timer);
+      } else {
+        console.log("System is active, resuming timer");
+        // Add logic to resume your break timer here
+        timer = setInterval(() => {
+          secondsLeft--;
+          updateDisplay();
+
+          if (secondsLeft <= 0) {
+            // Switch modes
+            isWorking = !isWorking;
+            secondsLeft = isWorking ? workDuration : breakDuration;
+            // Update display after switching modes
+            updateDisplay();
+          }
+        }, 1000);
+      }
+    }
+  });
 
   // Initialize app
   async function init() {
