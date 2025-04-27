@@ -36,7 +36,7 @@ impl IdleState {
                 sleep(Duration::from_secs(1)).await;
                 let now = SystemTime::now().duration_since(UNIX_EPOCH).map_or(0, |d| d.as_secs());
                 let last = last_event_time.load(Ordering::SeqCst);
-                let current_idle = now - last > 30;  // 5-minute idle threshold
+                let current_idle = now - last > 60;  // 5-minute idle threshold
                 if current_idle != is_idle.load(Ordering::SeqCst) {
                     is_idle.store(current_idle, Ordering::SeqCst);
                     app.emit("idle_state_changed", current_idle).unwrap();
@@ -59,7 +59,6 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
-        // .plugin(system_monitor::init())
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

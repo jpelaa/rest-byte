@@ -12,8 +12,6 @@ const invoke = window.__TAURI__.core.invoke;
 let permissionGranted;
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log(window.__TAURI__, "  window.__TAURI__ ");
-
   // DOM elements
   const timerDisplay = document.getElementById("timer-display");
   const statusMessage = document.getElementById("status-message");
@@ -30,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let workDuration = 25 * 60; // Default 25 minutes
   let breakDuration = 5 * 60; // Default 5 minutes
   let isRunning = false;
+  let isPaused = false;
 
   // Format time as MM:SS
   function formatTime(seconds) {
@@ -68,25 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
           isWorking = !isWorking;
           secondsLeft = isWorking ? workDuration : breakDuration;
 
-          // Show notification
           try {
-            // new Notification(
-            //   isWorking ? "Break finished!" : "Time for a break!",
-            //   {
-            //     body: isWorking
-            //       ? "Time to focus on your work again."
-            //       : "Step away from your computer for a bit.",
-            //   }
-            // );
-            // Once permission has been granted we can send the notification
-            // if (permissionGranted) {
-            //   sendNotification({
-            //     title: isWorking ? "Break finished!" : "Time for a break!",
-            //     body: isWorking
-            //       ? "Time to focus on your work again."
-            //       : "Step away from your computer for a bit.",
-            //   });
-            // }
             // Create a Yes/No dialog
             ask(
               isWorking
@@ -146,27 +127,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   listen("idle_state_changed", (event) => {
-    console.log("Event triggered : " + event.payload);
     if (isRunning && isWorking) {
       if (event.payload) {
         console.log("System is idle, pausing timer");
         // Add logic to pause your break timer here
         clearInterval(timer);
+        isPaused = true;
       } else {
         console.log("System is active, resuming timer");
-        // Add logic to resume your break timer here
-        timer = setInterval(() => {
-          secondsLeft--;
-          updateDisplay();
-
-          if (secondsLeft <= 0) {
-            // Switch modes
-            isWorking = !isWorking;
-            secondsLeft = isWorking ? workDuration : breakDuration;
-            // Update display after switching modes
+        if (isPaused) {
+          isPaused = false;
+          timer = setInterval(() => {
+            secondsLeft--;
             updateDisplay();
-          }
-        }, 1000);
+
+            if (secondsLeft <= 0) {
+              // Switch modes
+              isWorking = !isWorking;
+              secondsLeft = isWorking ? workDuration : breakDuration;
+
+              // Show notification
+              try {
+                ask(
+                  isWorking
+                    ? "Time to focus on your work again."
+                    : "Step away from your computer for a bit.",
+                  {
+                    title: isWorking ? "Break finished!" : "Time for a break!",
+                    kind: "warning",
+                  }
+                ).then((ans) => {
+                  if (ans) {
+                  } else {
+                    resetTimer();
+                    startTimer();
+                  }
+                });
+              } catch (e) {
+                console.error("Notification failed:", e);
+              }
+
+              // Update display after switching modes
+              updateDisplay();
+            }
+          }, 1000);
+        }
       }
     }
   });
